@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Academic_assignment;
 use Illuminate\Http\Request;
+use App\Services\AcademicAssignmentService;
 
 class AcademicAssignmentController extends Controller
 {
+    public function __construct(private AcademicAssignmentService $service) {}
     /**
      * Display a listing of the resource.
      */
@@ -28,7 +30,22 @@ class AcademicAssignmentController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data = $request->validate([
+            'teacher_id'       => 'required|integer',
+            'grade_subject_id' => 'required|integer',
+            'year_id'          => 'required|integer'
+        ]);
+
+        return $this->service->assign(
+            $data['teacher_id'],
+            $data['grade_subject_id'],
+            $data['year_id']
+        );
+    }
+
+    public function byTeacher($teacherId, $yearId)
+    {
+        return $this->service->getByTeacher($teacherId, $yearId);
     }
 
     /**

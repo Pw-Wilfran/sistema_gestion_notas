@@ -32,4 +32,9 @@ class Academic_year extends Model
     {
         return $this->hasMany(Academic_assignment::class, 'academic_year_id', 'id');
     }
+
+    public function institution()
+    {
+        return $this->belongsTo(Institution::class);
+    }
 }

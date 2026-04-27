@@ -44,6 +44,11 @@ class User extends Authenticatable
     {
         return $this->password_hash;
     }
+
+    public function signatures()
+    {
+        return $this->hasMany(Signature::class);
+    }
  
     public function role()
     {

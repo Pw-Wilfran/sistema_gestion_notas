@@ -14,6 +14,7 @@ class Academic_assignment extends Model
         'teacher_id',
         'grade_subject_id',
         'academic_year_id',
+        'rotation_group_id',
         'active',
     ];
 
@@ -26,12 +27,18 @@ class Academic_assignment extends Model
 
     public function gradeSubject()
     {
+        // Adjust if Grade_subject model is named differently
         return $this->belongsTo(Grade_subject::class, 'grade_subject_id', 'id');
     }
 
-    public function AcademicYear()
+    public function academicYear()
     {
         return $this->belongsTo(Academic_year::class, 'academic_year_id', 'id');
+    }
+
+    public function rotationGroup()
+    {
+        return $this->belongsTo(RotationGroup::class, 'rotation_group_id', 'id');
     }
 
     public function activities()

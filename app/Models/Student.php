@@ -6,6 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Student extends Model
 {
+    public function guardians()
+    {
+        return $this->belongsToMany(Guardian::class, 'student_guardians');
+    }
+
     protected $table = 'students';
     protected $primaryKey = 'id_estudiante';
     public $timestamps = false;

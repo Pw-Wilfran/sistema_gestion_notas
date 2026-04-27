@@ -7,22 +7,11 @@ use App\Models\Report_observation;
 use Illuminate\Http\Request;
 use App\Models\Final_result;
 use App\Models\Grade;
+use App\Services\ReportService;
 
 class ReportObservationController extends Controller
 {
-    protected $service;
-
-    public function getStudentReport($enrollmentId)
-    {
-        return Period_result::with(['gradeSubject.subject'])
-            ->where('enrollment_id', $enrollmentId)
-            ->get();
-    }
-
-    public function getFinalReport($enrollmentId)
-    {
-        return Final_result::where('enrollment_id', $enrollmentId)->first();
-    }
+    public function __construct(private ReportService $service) {}
 
     /**
      * Display a listing of the resource.
@@ -45,31 +34,34 @@ class ReportObservationController extends Controller
      */
     public function store(Request $request)
     {
-        $max = setting('max_grade', 5.0);
-
-        if ($request->value > $max) {
-            return response()->json([
-                'error' => 'Grade exceeds maximum allowed'
-            ], 422);
-        }
-
-        $grade = Grade::create($request->all());
-
-        $this->service->storePeriodResult(
-            $request->enrollment_id,
-            $request->period_id,
-            $request->grade_subject_id
-        );
-
-        return $grade;
+        //
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Report_observation $report_observation)
+    // Get report
+    public function show($enrollmentId, $periodId)
     {
-        //
+        return $this->service->generateReport($enrollmentId, $periodId);
+    }
+
+    // Save observation
+    public function saveObservation(Request $request)
+    {
+        $data = $request->validate([
+            'enrollment_id' => 'required|integer',
+            'period_id'     => 'required|integer',
+            'teacher_id'    => 'required|integer',
+            'text'          => 'required|string'
+        ]);
+
+        return $this->service->saveObservation(
+            $data['enrollment_id'],
+            $data['period_id'],
+            $data['teacher_id'],
+            $data['text']
+        );
     }
 
     /**

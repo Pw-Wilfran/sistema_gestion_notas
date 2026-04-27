@@ -8,12 +8,8 @@ use App\Services\GradeService;
 
 class GradeController extends Controller
 {
-    protected $service;
-    
-    public function __construct(GradeService $service)
-    {
-        $this->service = $service;
-    }
+
+    public function __construct(private GradeService $service) {}
 
     /**
      * Display a listing of the resource.
@@ -36,28 +32,36 @@ class GradeController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'enrollment_id' => 'required|exists:enrollments,id',
-            'activity_id' => 'required|exists:activities,id',
-            'value' => 'required|numeric|min:0',
-            'period_id' => 'required|exists:periods,id',
-            'grade_subject_id' => 'required|exists:grade_subject,id',
+        $data = $request->validate([
+            'enrollment_id' => 'required|integer',
+            'activity_id'   => 'required|integer',
+            'value'         => 'required|numeric'
         ]);
 
-        $grade = Grade::create([
-            'enrollment_id' => $validated['enrollment_id'],
-            'activity_id' => $validated['activity_id'],
-            'value' => $this->service->normalizeGrade($validated['value']),
-        ]);
-
-        // 🔥 recalcular automáticamente
-        $this->service->storePeriodResult(
-            $validated['enrollment_id'],
-            $validated['period_id'],
-            $validated['grade_subject_id']
+        return $this->service->store(
+            $data['enrollment_id'],
+            $data['activity_id'],
+            $data['value']
         );
+    }
 
-        return response()->json($grade, 201);
+    // Bulk store
+    public function storeBulk(Request $request)
+    {
+        $data = $request->validate([
+            'activity_id' => 'required|integer',
+            'grades'      => 'required|array'
+        ]);
+
+        $this->service->storeBulk($data['activity_id'], $data['grades']);
+
+        return response()->json(['message' => 'Grades saved']);
+    }
+
+    // Get grades by student and period
+    public function byStudentPeriod($enrollmentId, $periodId)
+    {
+        return $this->service->getByStudentAndPeriod($enrollmentId, $periodId);
     }
 
     /**

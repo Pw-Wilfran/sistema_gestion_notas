@@ -10,6 +10,11 @@ class Subject extends Model
     protected $primaryKey = 'id_subject';
     public $timestamps = false;
 
+    public function area()
+    {
+        return $this->belongsTo(Area::class);
+    }
+
     protected $fillable = ['name', 'code', 'description', 'active'];
     protected $casts = ['active' => 'boolean'];
 

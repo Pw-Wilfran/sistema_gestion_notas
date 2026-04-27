@@ -4,9 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\Enrollment;
 use Illuminate\Http\Request;
+use App\Services\EnrollmentService;
+
+
 
 class EnrollmentController extends Controller
 {
+    public function __construct(private EnrollmentService $service) {}
     /**
      * Display a listing of the resource.
      */
@@ -28,7 +32,28 @@ class EnrollmentController extends Controller
      */
     public function store(Request $request)
     {
-        return Enrollment::create($request->all());
+        $data = $request->validate([
+            'student_id' => 'required|integer',
+            'grade_id'   => 'required|integer',
+            'year_id'    => 'required|integer'
+        ]);
+
+        return $this->service->enroll(
+            $data['student_id'],
+            $data['grade_id'],
+            $data['year_id']
+        );
+    }
+
+    public function cancel($id)
+    {
+        $this->service->cancel($id);
+        return response()->json(['message' => 'Enrollment cancelled']);
+    }
+
+    public function list($gradeId, $yearId)
+    {
+        return $this->service->getByGradeAndYear($gradeId, $yearId);
     }
 
     /**

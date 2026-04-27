@@ -4,9 +4,38 @@ namespace App\Http\Controllers;
 
 use App\Models\Attendance;
 use Illuminate\Http\Request;
+use App\Services\AttendanceService;
+
+
 
 class AttendanceController extends Controller
 {
+
+    public function __construct(private AttendanceService $service) {}
+
+    public function storeBulk(Request $request)
+    {
+        $data = $request->validate([
+            'assignment_id' => 'required|integer',
+            'date'          => 'required|date',
+            'records'       => 'required|array'
+        ]);
+
+        $this->service->storeBulk(
+            $data['assignment_id'],
+            $data['date'],
+            $data['records']
+        );
+
+        return response()->json(['message' => 'Attendance saved']);
+    }
+
+    public function summary($enrollmentId, $assignmentId)
+    {
+        return $this->service->studentSummary($enrollmentId, $assignmentId);
+    }
+
+
     /**
      * Display a listing of the resource.
      */

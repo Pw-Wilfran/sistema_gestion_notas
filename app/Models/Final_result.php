@@ -16,6 +16,7 @@ class Final_result extends Model
         'final_status',
         'ranking',
         'promoted',
+        'performance_level_id',
     ];
 
     protected $casts = [
@@ -26,5 +27,10 @@ class Final_result extends Model
     public function enrollment()
     {
         return $this->belongsTo(Enrollment::class, 'enrollment_id', 'id');
+    }
+
+    public function performanceLevel()
+    {
+        return $this->belongsTo(PerformanceLevel::class);
     }
 }

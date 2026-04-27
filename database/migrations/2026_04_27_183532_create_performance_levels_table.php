@@ -11,16 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('academic_years', function (Blueprint $table) {
+        Schema::create('performance_levels', function (Blueprint $table) {
             $table->id();
-
-            $table->integer('year');
-            $table->boolean('active')->default(true);
-            $table->string('status')->nullable()->after('active');
-
-            $table->date('start_date');
-            $table->date('end_date');
-
+            $table->string('name');
+            $table->decimal('min_score', 5, 2);
+            $table->decimal('max_score', 5, 2);
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
     }
@@ -30,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('academic_years');
+        Schema::dropIfExists('performance_levels');
     }
 };

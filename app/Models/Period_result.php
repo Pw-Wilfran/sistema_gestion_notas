@@ -16,6 +16,7 @@ class Period_result extends Model
         'grade_subject_id',
         'average',
         'status',
+        'performance_level_id',
     ];
 
     protected $casts = ['average' => 'decimal:2'];
@@ -33,5 +34,10 @@ class Period_result extends Model
     public function grade_subject()
     {
         return $this->belongsTo(Grade_subject::class, 'grade_subject_id', 'id');
+    }
+
+    public function performanceLevel()
+    {
+        return $this->belongsTo(PerformanceLevel::class);
     }
 }
